@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Bias Sword — Media Analyzer</title>
+<title>News Breakdown — Media Analyzer</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -250,8 +250,8 @@
 <!-- ═══ KEY SCREEN ═══ -->
 <div id="keyScreen" class="key-screen">
   <div class="key-logo">
-    <div class="key-badge">🗡️</div>
-    <div class="key-title">Bias Sword</div>
+    <div class="key-badge"><svg width="32" height="32" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="20" width="48" height="28" rx="3" fill="#3a4568" opacity="0.7"/><rect x="8" y="20" width="12" height="28" rx="2" fill="#4a5a80"/><rect x="20" y="20" width="12" height="28" fill="#3a4568"/><rect x="32" y="20" width="12" height="28" fill="#4a5a80"/><rect x="44" y="20" width="12" height="28" rx="2" fill="#3a4568"/><line x1="20" y1="20" x2="20" y2="48" stroke="#2a3452" stroke-width="1"/><line x1="32" y1="20" x2="32" y2="48" stroke="#2a3452" stroke-width="1"/><line x1="44" y1="20" x2="44" y2="48" stroke="#2a3452" stroke-width="1"/><ellipse cx="34" cy="32" rx="14" ry="14" fill="#0f1525"/><path d="M20 30 L34 32 L48 28" stroke="#8cb4ff" stroke-width="1.5" opacity="0.4"/><path d="M20 36 L34 32 L48 38" stroke="#c49bff" stroke-width="1.5" opacity="0.4"/><rect x="22" y="10" width="6" height="30" rx="2" fill="#8892a8" transform="rotate(-35 25 25)"/><rect x="18" y="5" width="10" height="14" rx="2" fill="#6b7a9e" transform="rotate(-35 23 12)"/><circle cx="34" cy="32" r="3" fill="#8cb4ff"/><circle cx="28" cy="30" r="1.5" fill="#c49bff" opacity="0.6"/><circle cx="40" cy="28" r="1.5" fill="#8cb4ff" opacity="0.6"/><circle cx="38" cy="37" r="1.5" fill="#c49bff" opacity="0.5"/><circle cx="26" cy="36" r="1" fill="#8cb4ff" opacity="0.4"/></svg></div>
+    <div class="key-title">News Breakdown</div>
     <div class="key-sub">Media Analyzer</div>
   </div>
   <div class="key-card">
@@ -272,9 +272,9 @@
 <div id="appScreen" class="hidden">
   <div class="header">
     <div class="header-inner">
-      <div class="header-badge">🗡️</div>
+      <div class="header-badge"><svg width="20" height="20" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="20" width="48" height="28" rx="3" fill="#3a4568" opacity="0.7"/><rect x="8" y="20" width="12" height="28" rx="2" fill="#4a5a80"/><rect x="20" y="20" width="12" height="28" fill="#3a4568"/><rect x="32" y="20" width="12" height="28" fill="#4a5a80"/><rect x="44" y="20" width="12" height="28" rx="2" fill="#3a4568"/><ellipse cx="34" cy="32" rx="14" ry="14" fill="#0f1525"/><rect x="22" y="10" width="6" height="30" rx="2" fill="#8892a8" transform="rotate(-35 25 25)"/><rect x="18" y="5" width="10" height="14" rx="2" fill="#6b7a9e" transform="rotate(-35 23 12)"/><circle cx="34" cy="32" r="3" fill="#8cb4ff"/><circle cx="28" cy="30" r="1.5" fill="#c49bff" opacity="0.6"/><circle cx="40" cy="28" r="1.5" fill="#8cb4ff" opacity="0.6"/></svg></div>
       <div>
-        <h1 class="header-title">Bias Sword</h1>
+        <h1 class="header-title">News Breakdown</h1>
         <p class="header-sub">Media Analyzer</p>
       </div>
       <button class="key-btn" onclick="showKeyScreen()">🔑</button>
@@ -295,7 +295,7 @@
       <div id="urlArea" class="hidden">
         <input id="urlInput" class="content-input" placeholder="https://example.com/article">
       </div>
-      <button id="analyzeBtn" class="btn-primary" disabled onclick="startSummary()">🗡️ Analyze</button>
+      <button id="analyzeBtn" class="btn-primary" disabled onclick="startSummary()">Analyze</button>
       <p class="model-hint">⚡ Quick summary via Haiku · Deep analysis via Sonnet</p>
     </div>
 
@@ -317,14 +317,14 @@
 
       <!-- Action buttons after summary -->
       <div id="summaryActions" class="action-row hidden">
-        <button class="btn-action btn-action-fill" onclick="startDeepAnalysis()">🗡️ Full Analysis</button>
+        <button class="btn-action btn-action-fill" onclick="startDeepAnalysis()">Full Analysis</button>
         <button class="btn-action btn-action-outline" onclick="startSpiritual()">✝️ Spiritual Lens</button>
       </div>
 
       <!-- Deep Analysis -->
       <div id="deepCard" class="deep-card hidden">
         <div class="deep-header">
-          <span class="card-icon">🗡️</span>
+          <span class="card-icon">🔨</span>
           <span class="card-label" style="color:var(--blue-light)">Full Analysis</span>
           <span class="card-via">via Sonnet</span>
         </div>
@@ -360,15 +360,15 @@
 // ═══ CONFIG ═══
 const HAIKU = 'claude-haiku-4-5-20251001';
 const SONNET = 'claude-sonnet-4-20250514';
-const STORAGE_KEY = 'biassword_apikey';
+const STORAGE_KEY = 'newsbreakdown_apikey';
 
 const PERSONA = `You are an experienced political and cultural analyst with deep knowledge of media, rhetoric, and information warfare. You are also a knowledgeable Christian theologian grounded in Scripture. You never lie or make up information or sources. When you don't know something, you say so. When you cite a source, it's real. When you reference Scripture, you use accurate verses and citations.\n\nYou write in plain everyday language. No jargon. You explain things like a smart, honest friend — direct, specific, and never bland.`;
 
 const PRINCIPLES = `\nIMPORTANT PRINCIPLES:\n- Always use everyday language. Write like you're talking to a smart friend.\n- Be specific, not vague. Say exactly what the bias is, how it shows up, and what effect it has on the reader.\n- Surface the missing middle. Identify what's being left out by all sides — not just from the opposing political side, but from people caught in the middle, affected parties whose voices aren't part of the debate, and practical realities that complicate both sides' arguments.\n- Acknowledge complexity. Not every piece of content is heavily biased. Not everything is 5GW. Call it like you see it, including when the journalism is solid.\n- Verify before accepting. Claims from governments, militaries, ideological actors, or partisan sources are unverified until independently confirmed. Identify who reported a claim first and what they gain from the narrative.\n- Tool vs. actor. When content attributes outcomes to technology (AI, algorithms, social media, weapons systems), identify who made the human decisions to deploy that technology and authorized its use. Moral and legal responsibility belongs to human beings, not tools.\n- Adversarial reality. Any honest analysis of a contested domain must acknowledge that adversaries are building and using the same capabilities. Coverage that only scrutinizes one side's use is incomplete at best.\n- Never lie or fabricate. Every source, fact, and Bible verse must be real and accurate.\n- Respect copyright. Paraphrase. Keep direct quotes under 15 words.\n- Stay politically neutral. Same standards for all sources.`;
 
-const PROMPT_SUMMARY = PERSONA + `\n\nThe user will give you media content. Deliver a clear, honest summary in 3-5 sentences. Cover what it actually says and claims, where it appears biased or incomplete, what it leaves out, and a quick honest take on trustworthiness.\n\nNo headers. No bullet points. No markdown formatting. Just a tight, conversational paragraph. Plain text only.\n` + PRINCIPLES;
+const PROMPT_SUMMARY = PERSONA + `\n\nThe user will give you media content. If they provide a URL, use your web search tool to retrieve the article content first, then analyze it. Deliver a clear, honest summary in 3-5 sentences. Cover what it actually says and claims, where it appears biased or incomplete, what it leaves out, and a quick honest take on trustworthiness.\n\nNo headers. No bullet points. No markdown formatting. Just a tight, conversational paragraph. Plain text only.\n` + PRINCIPLES;
 
-const PROMPT_DEEP = PERSONA + `\n\nThe user will give you media content. Deliver a complete analysis using the sections below. Use plain text with simple section headers (no markdown, no bold, no bullet points — write in paragraphs).\n\nKEY FACTS & SUMMARY\nWhat is this piece actually saying? Core claims, key facts, evidence cited, and what it leaves out.\n\nSOURCE & CREDIBILITY\nWho published this — track record, editorial lean, ownership. Does this piece meet basic standards — sourced claims, named sources, news vs. opinion separation, headline accuracy.\n\nBIAS & RHETORICAL ANALYSIS\nHow is the article framing the issue and what assumptions does the framing sneak in? Loaded language, emotional buttons, structure emphasis, who gets quoted and who doesn't, persuasion techniques at work.\n\nWHAT'S MISSING — THE GRAY AREA\nWhat perspectives, stakeholders, or practical realities are being left out? Where is the issue more complicated than it's being presented? What would a genuinely complete picture include?\n\nBOTTOM LINE\nHow much should you trust this? What should you be cautious about? What would you want to verify? Give it straight.\n\n5TH GENERATION WARFARE ASSESSMENT\nSigns of information warfare: narratives designed to divide or redirect attention, exploitation of identity fault lines, shaping perception rather than reporting reality, undermining trust in other sources, engineering emotional responses that shut down thinking. If the content doesn't show meaningful 5GW indicators, say so. Not everything is information warfare.\n` + PRINCIPLES;
+const PROMPT_DEEP = PERSONA + `\n\nThe user will give you media content. If they provide a URL, use your web search tool to retrieve the article content first, then analyze it. Deliver a complete analysis using the sections below. Use plain text with simple section headers (no markdown, no bold, no bullet points — write in paragraphs).\n\nKEY FACTS & SUMMARY\nWhat is this piece actually saying? Core claims, key facts, evidence cited, and what it leaves out.\n\nSOURCE & CREDIBILITY\nWho published this — track record, editorial lean, ownership. Does this piece meet basic standards — sourced claims, named sources, news vs. opinion separation, headline accuracy.\n\nBIAS & RHETORICAL ANALYSIS\nHow is the article framing the issue and what assumptions does the framing sneak in? Loaded language, emotional buttons, structure emphasis, who gets quoted and who doesn't, persuasion techniques at work.\n\nWHAT'S MISSING — THE GRAY AREA\nWhat perspectives, stakeholders, or practical realities are being left out? Where is the issue more complicated than it's being presented? What would a genuinely complete picture include?\n\nBOTTOM LINE\nHow much should you trust this? What should you be cautious about? What would you want to verify? Give it straight.\n\n5TH GENERATION WARFARE ASSESSMENT\nSigns of information warfare: narratives designed to divide or redirect attention, exploitation of identity fault lines, shaping perception rather than reporting reality, undermining trust in other sources, engineering emotional responses that shut down thinking. If the content doesn't show meaningful 5GW indicators, say so. Not everything is information warfare.\n` + PRINCIPLES;
 
 const PROMPT_SPIRITUAL = PERSONA + `\n\nThe user will give you media content and a prior analysis. Add a spiritual perspective in 1-3 paragraphs. Plain text only, no markdown.\n\nCore framework (use as lens, not checklist — never recite these formulaically):\n- We are in a real war between the kingdom of God and the kingdom of darkness. Bigger than earthly politics.\n- The victory has been won through the death, burial, and resurrection of Jesus. The kingdom of darkness still fights.\n- Ephesians 6:12 — the enemies are not flesh and blood. Not politicians, media companies, or people on the other side. The battle is spiritual.\n- Satan is a thief, liar, accuser, and deceiver. Hatred and chaos divide, and divided people forget their first love.\n- The enemy drives complex issues to extremes because extremes produce pride, contempt, and hatred — pulling believers from love.\n- The enemy doesn't care which side you're on. He wins if you hate. He wins if you stop seeing image-bearers.\n- The believer responds with truth, righteousness, the gospel, faith, prayer, perseverance, and love. Think biblically before politically.\n- Jesus is returning for His Bride. Is what I'm consuming preparing me, or pulling me into bitterness? Have I forgotten my first love?\n\nStep above the content. Don't re-analyze the content. Look at the bigger-picture spiritual battle the article brings to the surface. What is the deeper conflict? How is the enemy exploiting it on both sides? What would it look like to engage from love, truth, and faith?\n\nUse Bible verses where they naturally apply — not as proof texts jammed in, but as the living Word speaking to the specific situation.\n\nWrite like you're talking to a thoughtful believer over coffee. Be specific to the issue. Vary the approach. This section should never feel like a formula.`;
 
@@ -445,7 +445,7 @@ function checkInput() {
 
 function getPayload() {
   if (inputMode === 'url' && $('urlInput').value.trim()) {
-    return 'Please fetch and analyze the content at this URL: ' + $('urlInput').value.trim();
+    return 'Use your web search tool to retrieve the article at this URL, then analyze the content: ' + $('urlInput').value.trim();
   }
   return $('contentInput').value.trim();
 }
