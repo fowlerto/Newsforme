@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Clear Eye</title>
+<title>Bias Sword</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -363,8 +363,8 @@ input[type="url"] { height: 48px; }
 
 <!-- API KEY GATE -->
 <div id="keyScreen">
-  <div class="key-icon">👁</div>
-  <h2>Clear Eye</h2>
+  <div class="key-icon">🗡️</div>
+  <h2>Bias Sword</h2>
   <p class="key-sub">Bias detection, credibility analysis &amp; the bigger picture. Enter your Anthropic API key to begin.</p>
 
   <div class="key-field-wrap">
@@ -390,9 +390,9 @@ input[type="url"] { height: 48px; }
 <header>
   <div class="header-inner">
     <div class="logo-group">
-      <div class="logo-badge">👁</div>
+      <div class="logo-badge">🗡️</div>
       <div class="logo-text">
-        <h1>Clear Eye</h1>
+        <h1>Bias Sword</h1>
         <p>Media Analyzer</p>
       </div>
     </div>
@@ -475,17 +475,7 @@ OPENING SUMMARY (your first response):
 Write a tight 3-5 sentence paragraph in plain everyday language. Cover what the article says, where it appears biased or incomplete, and your honest take. No headers. No bullet points. No markdown formatting. Just a conversational paragraph.
 
 End your response with exactly this line on its own:
-CHOICES:deeper_or_done
-
-DEEPER SUMMARY (when requested):
-Write 2-3 paragraphs. No headers, no bullet points. Cover:
-- What the article is really claiming
-- Where it's biased, what it leaves out, how it steers the reader
-- Gray areas being flattened
-- How much to trust it
-
-End your response with:
-CHOICES:spiritual
+CHOICES:full_or_done
 
 FULL ANALYSIS (when requested):
 Deliver section-by-section. Use these exact section headers (prefixed with ###):
@@ -496,9 +486,7 @@ Deliver section-by-section. Use these exact section headers (prefixed with ###):
 ### Bottom Line
 ### 5th Generation Warfare Assessment
 
-Note: You cannot fetch URLs yourself in this app. If the user provides a URL, acknowledge you are analyzing based on the URL provided, and ask them to also paste the text if possible, OR attempt to analyze from the URL alone if you recognize the source. Be honest about limitations.
-
-After any analysis, end with:
+After full analysis, end with:
 CHOICES:spiritual
 
 SPIRITUAL PERSPECTIVE (when requested):
@@ -508,6 +496,14 @@ End with:
 CHOICES:done
 
 When you see CHOICES:done, respond with exactly: DONE
+
+CRITICAL ANALYTICAL PRINCIPLES — apply these throughout every analysis:
+
+Demand verification before accepting claims. When a claim originates from a hostile or interested party — a government, military, or ideological actor — treat it as unverified until confirmed by independent sources. Ask: who reported this first, and what do they gain from the narrative? Iran reporting that Israel hit a school with an AI-guided weapon is a claim that requires independent verification, not a fact to lead with.
+
+Distinguish the tool from the actor. Blaming AI for civilian casualties follows the same false logic as blaming a gun instead of the person pulling the trigger. Technology is a tool. Moral responsibility belongs to the human beings who deploy it, authorize it, and set the rules of engagement. An analysis that attributes fault to AI rather than to decision-makers is obscuring accountability, not illuminating it.
+
+Acknowledge adversarial reality. Our adversaries are not standing still. Any honest analysis of AI in warfare must account for the fact that hostile nations are actively developing and deploying AI weapons systems against us. A narrative that only scrutinizes Western or allied AI use while ignoring adversarial AI development is incomplete at best and manipulative at worst.
 
 Keep all responses plain text — no markdown bold/italic, no bullet dashes, just clean prose and the ### headers for full analysis sections only.`;
 
@@ -623,13 +619,12 @@ function renderChoices(tag) {
   card.className = 'choices-card';
   card.id = 'choicesCard';
 
-  if (tag === 'deeper_or_done') {
+  if (tag === 'full_or_done') {
     card.innerHTML = `
-      <p class="choices-question">Want to go deeper?</p>
-      <button class="choice-btn" onclick="handleChoice('Please give me a deeper summary.','Deeper summary')"><span>Deeper summary</span><span class="chevron">›</span></button>
-      <button class="choice-btn" onclick="handleChoice('Please give me the full analysis.','Full analysis')"><span>Full analysis</span><span class="chevron">›</span></button>
-      <button class="choice-btn" onclick="handleChoice('That is enough, thanks.','That\\'s enough, thanks')"><span>That's enough, thanks</span><span class="chevron">›</span></button>`;
-  } else if (tag === 'spiritual') {
+      <p class="choices-question">Want the full analysis?</p>
+      <button class="choice-btn" onclick="handleChoice('Yes, please give me the full analysis.','Full analysis')"><span>Yes, full analysis</span><span class="chevron">›</span></button>
+      <button class="choice-btn" onclick="handleChoice('No thanks.','No thanks')"><span>No thanks</span><span class="chevron">›</span></button>`;
+    } else if (tag === 'spiritual') {
     card.innerHTML = `
       <p class="choices-question">Would you like a spiritual perspective?</p>
       <button class="choice-btn" onclick="handleChoice('Yes, please give me a spiritual perspective.','Yes — spiritual perspective')"><span>Yes, show me</span><span class="chevron">›</span></button>
@@ -661,7 +656,7 @@ function addAssistantBubble(text) {
   const formatted = text
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/\n/g, '<br>');
-  el.innerHTML = `<div class="msg-label analyst"><span class="dot"></span>Clear Eye Analyst</div><div class="msg-body">${formatted}</div>`;
+  el.innerHTML = `<div class="msg-label analyst"><span class="dot"></span>Bias Sword Analyst</div><div class="msg-body">${formatted}</div>`;
   document.getElementById('messages').appendChild(el);
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -669,7 +664,7 @@ function addAssistantBubble(text) {
 function addLoading(msg) {
   const el = document.createElement('div');
   el.className = 'loading-card';
-  el.innerHTML = `<div class="spinner-wrap">👁</div><span class="loading-text">${escapeHtml(msg)}</span>`;
+  el.innerHTML = `<div class="spinner-wrap">🗡️</div><span class="loading-text">${escapeHtml(msg)}</span>`;
   document.getElementById('messages').appendChild(el);
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   return el;
