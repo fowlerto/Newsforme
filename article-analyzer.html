@@ -3,689 +3,675 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Bias Sword</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<title>Bias Sword — Media Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg0: #080a12;
-  --bg1: #0d1020;
-  --surface: rgba(255,255,255,0.055);
-  --surface-hi: rgba(255,255,255,0.09);
-  --border: rgba(255,255,255,0.1);
-  --border-hi: rgba(255,255,255,0.18);
-  --text: #eef0ff;
-  --text2: rgba(238,240,255,0.62);
-  --text3: rgba(238,240,255,0.35);
-  --accent: #6c8eff;
-  --accent2: #b48bff;
-  --gold: #f0b429;
-  --radius: 18px;
-  --radius-sm: 13px;
-}
+  :root {
+    --bg1: #0a0c15; --bg2: #0f1525; --bg3: #0a0e1a;
+    --glass: rgba(255,255,255,0.03); --glass-border: rgba(255,255,255,0.06);
+    --blue: #5b8af0; --purple: #7b5bf0; --blue-light: #8cb4ff; --purple-light: #c49bff;
+    --text: #c8d0e0; --text-dim: #5a6580; --text-faint: #3d4760; --text-muted: #4a5570;
+    --text-section: #b0b8cc;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(165deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .orb1, .orb2 {
+    position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+  }
+  .orb1 {
+    top: -20%; left: -10%; width: 60%; height: 60%;
+    background: radial-gradient(circle, rgba(91,138,240,0.06) 0%, transparent 70%);
+    animation: drift1 25s ease-in-out infinite;
+  }
+  .orb2 {
+    bottom: -15%; right: -15%; width: 50%; height: 50%;
+    background: radial-gradient(circle, rgba(123,91,240,0.05) 0%, transparent 70%);
+    animation: drift2 30s ease-in-out infinite;
+  }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { scroll-behavior: smooth; }
+  /* KEY SCREEN */
+  .key-screen {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 24px;
+    position: relative; z-index: 1;
+  }
+  .key-logo { text-align: center; margin-bottom: 40px; }
+  .key-badge {
+    width: 64px; height: 64px; border-radius: 20px; margin: 0 auto 16px;
+    background: linear-gradient(135deg, rgba(99,140,255,0.2), rgba(140,99,255,0.2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; border: 1px solid rgba(99,140,255,0.15);
+    box-shadow: 0 0 40px rgba(99,140,255,0.1);
+  }
+  .key-title {
+    font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700;
+    background: linear-gradient(135deg, var(--blue-light), var(--purple-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .key-sub { font-size: 12px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+  .key-card {
+    width: 100%; max-width: 380px; padding: 24px; border-radius: 20px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+  }
+  .key-label { font-size: 13px; color: #8892a8; display: block; margin-bottom: 8px; }
+  .key-input {
+    width: 100%; padding: 14px; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);
+    color: var(--text); font-family: 'DM Sans', monospace; font-size: 14px; outline: none;
+  }
+  .key-input:focus { border-color: rgba(91,138,240,0.4); }
+  .key-error { color: #ff6b6b; font-size: 12px; margin-top: 6px; }
+  .key-remember { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .key-remember input { accent-color: var(--blue-light); }
+  .key-remember span { font-size: 12px; color: #6a7590; }
+  .key-forget {
+    background: none; border: none; color: #ff6b8a; font-size: 11px;
+    cursor: pointer; margin-top: 8px; padding: 0;
+  }
+  .key-submit {
+    width: 100%; padding: 14px; margin-top: 16px; border-radius: 14px; border: none;
+    cursor: pointer; font-size: 15px; font-weight: 600;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: #fff; box-shadow: 0 4px 24px rgba(91,138,240,0.3);
+  }
+  .key-hint { text-align: center; margin-top: 14px; font-size: 10px; color: var(--text-faint); }
 
-body {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg0);
-  color: var(--text);
-  min-height: 100vh;
-  min-height: 100dvh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+  /* HEADER */
+  .header {
+    padding: 20px 20px 16px; position: sticky; top: 0; z-index: 50;
+    background: rgba(10,12,21,0.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .header-inner { max-width: 680px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .header-badge {
+    width: 36px; height: 36px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(99,140,255,0.2), rgba(140,99,255,0.2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; border: 1px solid rgba(99,140,255,0.12);
+  }
+  .header-title {
+    font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; margin: 0;
+    background: linear-gradient(135deg, var(--blue-light), var(--purple-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .header-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin: 0; }
+  .key-btn {
+    margin-left: auto; background: none; border: none; color: var(--text-muted);
+    font-size: 11px; cursor: pointer;
+  }
 
-/* BG ORBS */
-.bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-.orb { position: absolute; border-radius: 50%; filter: blur(90px); }
-.orb1 { width: 380px; height: 380px; background: radial-gradient(circle, #2040c0 0%, transparent 70%); opacity: 0.22; top: -120px; left: -100px; animation: drift1 16s ease-in-out infinite alternate; }
-.orb2 { width: 300px; height: 300px; background: radial-gradient(circle, #6020a0 0%, transparent 70%); opacity: 0.18; top: 35%; right: -80px; animation: drift2 20s ease-in-out infinite alternate; }
-.orb3 { width: 240px; height: 240px; background: radial-gradient(circle, #0870c0 0%, transparent 70%); opacity: 0.15; bottom: 25%; left: 10%; animation: drift3 24s ease-in-out infinite alternate; }
-@keyframes drift1 { to { transform: translate(30px, 50px); } }
-@keyframes drift2 { to { transform: translate(-25px, 70px); } }
-@keyframes drift3 { to { transform: translate(50px, -40px); } }
+  /* MAIN */
+  .main { max-width: 680px; margin: 0 auto; padding: 20px 16px 60px; position: relative; z-index: 1; }
 
-/* KEY SCREEN */
-#keyScreen {
-  position: fixed; inset: 0; z-index: 999;
-  background: linear-gradient(160deg, #0c0f22 0%, #070910 100%);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 40px 28px;
-  transition: opacity 0.35s ease;
-}
-.key-icon {
-  width: 76px; height: 76px; border-radius: 22px;
-  background: linear-gradient(140deg, #2f52d4 0%, #7040cc 100%);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 36px; margin-bottom: 22px;
-  box-shadow: 0 16px 48px rgba(80,120,255,0.4), 0 0 0 1px rgba(255,255,255,0.1) inset;
-}
-#keyScreen h2 {
-  font-family: 'Fraunces', serif;
-  font-size: 34px; font-weight: 700; letter-spacing: -0.5px;
-  color: var(--text); margin-bottom: 8px;
-}
-.key-sub {
-  font-size: 14px; color: var(--text2); line-height: 1.6;
-  text-align: center; margin-bottom: 32px; max-width: 280px;
-}
-.key-field-wrap {
-  width: 100%; max-width: 340px; position: relative; margin-bottom: 10px;
-}
-.key-field-wrap .lock-icon {
-  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  font-size: 16px; opacity: 0.4; pointer-events: none;
-}
-#apiKeyInput {
-  width: 100%;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px 14px 14px 42px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px; color: var(--text);
-  outline: none; letter-spacing: 0.3px;
-  transition: border-color 0.2s, background 0.2s;
-  -webkit-appearance: none;
-}
-#apiKeyInput:focus { border-color: var(--accent); background: rgba(108,142,255,0.07); }
-#apiKeyInput::placeholder { color: var(--text3); font-size: 13px; }
+  /* SEGMENT CONTROL */
+  .segment {
+    display: flex; gap: 0; margin-bottom: 16px; border-radius: 12px; overflow: hidden;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); padding: 3px;
+  }
+  .seg-btn {
+    flex: 1; padding: 10px 0; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 500; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .seg-btn.active { background: rgba(91,138,240,0.15); color: var(--blue-light); }
+  .seg-btn:not(.active) { background: transparent; color: var(--text-dim); }
 
-.remember-row {
-  display: flex; align-items: center; gap: 9px;
-  max-width: 340px; width: 100%; margin-bottom: 16px; cursor: pointer;
-}
-.remember-row input[type="checkbox"] {
-  width: 18px; height: 18px; accent-color: var(--accent);
-  cursor: pointer; border-radius: 5px; flex-shrink: 0;
-}
-.remember-row span { font-size: 13px; color: var(--text2); }
+  /* TEXTAREA / INPUT */
+  .content-input {
+    width: 100%; padding: 16px; border-radius: 16px;
+    border: 1px solid var(--glass-border); background: var(--glass);
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; line-height: 1.7; outline: none; resize: vertical;
+  }
+  .content-input:focus { border-color: rgba(91,138,240,0.3); }
+  textarea.content-input { min-height: 200px; }
+  .word-count { margin: 6px 0 0; font-size: 11px; color: var(--text-muted); text-align: right; }
 
-#saveKeyBtn {
-  width: 100%; max-width: 340px;
-  background: linear-gradient(135deg, #3050d8 0%, #6840d0 100%);
-  color: white; border: none; border-radius: var(--radius-sm);
-  padding: 15px; font-family: 'DM Sans', sans-serif;
-  font-size: 16px; font-weight: 600; cursor: pointer;
-  box-shadow: 0 8px 28px rgba(80,120,255,0.4);
-  transition: opacity 0.15s, transform 0.1s;
-}
-#saveKeyBtn:active { opacity: 0.85; transform: scale(0.98); }
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%; padding: 15px; margin-top: 16px; border-radius: 14px; border: none;
+    cursor: pointer; font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: #fff; box-shadow: 0 4px 24px rgba(91,138,240,0.25);
+    transition: all 0.3s;
+  }
+  .btn-primary:disabled {
+    background: rgba(255,255,255,0.04); color: var(--text-faint);
+    box-shadow: none; cursor: not-allowed;
+  }
+  .btn-action {
+    flex: 1; padding: 14px; border-radius: 14px; cursor: pointer;
+    font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-action-fill {
+    border: none; background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: #fff; box-shadow: 0 4px 20px rgba(91,138,240,0.25);
+  }
+  .btn-action-outline {
+    background: var(--glass); border: 1px solid rgba(140,180,255,0.15);
+    color: var(--blue-light);
+  }
+  .btn-reset {
+    width: 100%; padding: 13px; border-radius: 14px; cursor: pointer;
+    font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+    background: none; border: 1px solid var(--glass-border); color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .model-hint { text-align: center; margin-top: 10px; font-size: 10px; color: var(--text-faint); }
+  .action-row { display: flex; gap: 10px; margin-bottom: 14px; }
 
-.key-note {
-  font-size: 12px; color: var(--text3); margin-top: 16px;
-  text-align: center; max-width: 300px; line-height: 1.7;
-}
-.key-note a { color: var(--accent2); text-decoration: none; }
+  /* CARDS */
+  .card {
+    padding: 20px; border-radius: 18px; margin-bottom: 14px;
+    background: var(--glass); border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    animation: slideUp 0.3s ease;
+  }
+  .card-label-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .card-icon { font-size: 13px; }
+  .card-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
+  }
+  .card-via { font-size: 9px; color: var(--text-faint); margin-left: auto; }
+  .card-text { margin: 0; font-size: 15px; line-height: 1.85; white-space: pre-wrap; }
+  .card-spiritual { background: rgba(140,99,255,0.04); border-color: rgba(140,99,255,0.12); }
+  .card-spiritual .card-label { color: var(--purple-light); }
+  .card-spiritual .card-text { color: #c8c0d8; }
 
-#forgetBtn {
-  background: transparent; border: none; font-size: 12px;
-  color: var(--text3); margin-top: 12px; cursor: pointer;
-  font-family: 'DM Sans', sans-serif; transition: color 0.15s;
-}
-#forgetBtn:active { color: #f87171; }
+  /* DEEP ANALYSIS */
+  .deep-card {
+    border-radius: 18px; margin-bottom: 14px; overflow: hidden;
+    border: 1px solid var(--glass-border); background: rgba(255,255,255,0.02);
+    backdrop-filter: blur(12px); animation: slideUp 0.3s ease;
+  }
+  .deep-header {
+    padding: 12px 18px; background: rgba(91,138,240,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .deep-streaming { padding: 18px; }
+  .deep-streaming p { margin: 0; font-size: 14px; line-height: 1.85; color: var(--text-section); white-space: pre-wrap; }
 
-/* HEADER */
-header {
-  position: sticky; top: 0; z-index: 50;
-  background: rgba(8,10,18,0.8);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 20px;
-}
-.header-inner {
-  max-width: 520px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.logo-group { display: flex; align-items: center; gap: 12px; }
-.logo-badge {
-  width: 36px; height: 36px; border-radius: 10px;
-  background: linear-gradient(140deg, #2f52d4, #7040cc);
-  display: flex; align-items: center; justify-content: center; font-size: 18px;
-  box-shadow: 0 3px 14px rgba(80,120,255,0.35);
-}
-.logo-text h1 {
-  font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700;
-  letter-spacing: -0.3px; color: var(--text); line-height: 1;
-}
-.logo-text p {
-  font-size: 10px; color: var(--accent); letter-spacing: 1.5px;
-  text-transform: uppercase; font-weight: 500; margin-top: 2px;
-}
-#headerReset {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 7px 15px;
-  font-size: 12px; color: var(--text2); font-weight: 500;
-  font-family: 'DM Sans', sans-serif; cursor: pointer; display: none;
-  transition: background 0.15s;
-}
-#headerReset:active { background: var(--surface-hi); }
+  /* SECTIONS */
+  .section-btn {
+    width: 100%; padding: 14px 18px; display: flex; align-items: center; gap: 10px;
+    background: none; border: none; border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer; text-align: left; font-family: 'DM Sans', sans-serif;
+  }
+  .section-icon { font-size: 16px; }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--blue-light); flex: 1; }
+  .section-arrow { font-size: 11px; color: var(--text-muted); transition: transform 0.2s; }
+  .section-arrow.open { transform: rotate(180deg); }
+  .section-body { padding: 0 18px 16px 44px; }
+  .section-body p { margin: 0; font-size: 14px; line-height: 1.85; color: var(--text-section); }
 
-/* MAIN */
-main {
-  position: relative; z-index: 1;
-  padding: 22px 16px 120px;
-  max-width: 520px; margin: 0 auto;
-}
+  /* LOADING DOTS */
+  .dots { display: flex; gap: 5px; padding: 8px 0; }
+  .dots span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+  }
+  .dots span:nth-child(1) { animation: pulse 1.2s ease-in-out 0s infinite; }
+  .dots span:nth-child(2) { animation: pulse 1.2s ease-in-out 0.2s infinite; }
+  .dots span:nth-child(3) { animation: pulse 1.2s ease-in-out 0.4s infinite; }
 
-/* INPUT CARD */
-.input-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 20px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04) inset;
-  margin-bottom: 20px;
-  animation: cardIn 0.5s cubic-bezier(0.34,1.4,0.64,1);
-}
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(24px) scale(0.96); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
+  /* ERROR */
+  .error-box {
+    padding: 14px; border-radius: 14px; margin-bottom: 16px;
+    background: rgba(255,100,100,0.08); border: 1px solid rgba(255,100,100,0.15);
+    font-size: 13px; color: #ff8a8a;
+  }
 
-.section-label {
-  font-size: 11px; font-weight: 600; color: var(--text3);
-  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
-}
+  .hidden { display: none !important; }
 
-/* Segment control */
-.segment {
-  display: flex; background: rgba(0,0,0,0.35);
-  border-radius: 11px; padding: 3px; margin-bottom: 14px;
-  border: 1px solid var(--border);
-}
-.seg-btn {
-  flex: 1; background: transparent; border: none;
-  padding: 9px 10px; border-radius: 9px;
-  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-  color: var(--text3); cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.34,1.2,0.64,1);
-}
-.seg-btn.active {
-  background: rgba(255,255,255,0.1);
-  color: var(--text);
-  box-shadow: 0 1px 8px rgba(0,0,0,0.5);
-}
+  @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes pulse { 0%,100% { opacity:0.3; transform:scale(0.8); } 50% { opacity:1; transform:scale(1); } }
+  @keyframes drift1 { 0%,100% { transform:translate(0,0); } 50% { transform:translate(30px,20px); } }
+  @keyframes drift2 { 0%,100% { transform:translate(0,0); } 50% { transform:translate(-25px,-15px); } }
 
-textarea, input[type="url"] {
-  width: 100%; background: rgba(0,0,0,0.3);
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 14px; font-family: 'DM Sans', sans-serif;
-  font-size: 14px; color: var(--text); resize: none; outline: none;
-  transition: border-color 0.2s, background 0.2s;
-  -webkit-appearance: none; line-height: 1.55;
-}
-textarea:focus, input[type="url"]:focus {
-  border-color: var(--accent); background: rgba(108,142,255,0.07);
-}
-textarea { height: 128px; }
-input[type="url"] { height: 48px; }
-::placeholder { color: var(--text3); font-size: 13px; font-style: italic; }
-
-.analyze-btn {
-  width: 100%; margin-top: 14px;
-  background: linear-gradient(135deg, #3050d8 0%, #6840d0 100%);
-  color: white; border: none; border-radius: var(--radius-sm); padding: 15px;
-  font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; font-style: italic;
-  cursor: pointer; letter-spacing: 0.2px;
-  box-shadow: 0 8px 28px rgba(80,120,255,0.4);
-  transition: all 0.12s;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.analyze-btn:active { transform: scale(0.97); opacity: 0.88; }
-
-/* MESSAGES */
-.messages { display: flex; flex-direction: column; gap: 12px; }
-
-.msg {
-  border-radius: var(--radius); padding: 16px 18px;
-  border: 1px solid var(--border);
-  animation: msgIn 0.4s cubic-bezier(0.34,1.3,0.64,1);
-}
-@keyframes msgIn {
-  from { opacity: 0; transform: translateY(14px) scale(0.96); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.msg.user-msg {
-  background: linear-gradient(135deg, rgba(48,80,216,0.22), rgba(104,64,208,0.16));
-  border-color: rgba(108,142,255,0.22); margin-left: 28px;
-}
-.msg.analyst-msg {
-  background: var(--surface);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-}
-
-.msg-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
-  text-transform: uppercase; margin-bottom: 9px;
-  display: flex; align-items: center; gap: 7px;
-}
-.msg-label.user { color: var(--accent); }
-.msg-label.analyst { color: var(--accent2); }
-.dot {
-  width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0;
-}
-.msg-label.user .dot { background: var(--accent); }
-.msg-label.analyst .dot { background: var(--accent2); box-shadow: 0 0 7px var(--accent2); }
-
-.msg-body {
-  font-size: 14.5px; line-height: 1.72;
-  color: rgba(238,240,255,0.85); white-space: pre-wrap; word-break: break-word;
-}
-.msg-body h3 {
-  font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; font-style: italic;
-  margin: 16px 0 7px; color: var(--text);
-  display: flex; align-items: center; gap: 9px;
-}
-.msg-body h3::before {
-  content: ''; width: 3px; height: 15px; border-radius: 2px; flex-shrink: 0;
-  background: linear-gradient(to bottom, var(--accent), var(--accent2));
-}
-
-/* CHOICES */
-.choices-card {
-  background: rgba(15,18,32,0.75);
-  border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  animation: msgIn 0.4s cubic-bezier(0.34,1.3,0.64,1);
-}
-.choices-question {
-  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; font-style: italic;
-  color: var(--text); margin-bottom: 12px; padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.choice-btn {
-  display: flex; align-items: center; justify-content: space-between; width: 100%;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 13px 16px; margin-bottom: 8px;
-  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-  color: var(--text); text-align: left; cursor: pointer; transition: all 0.15s;
-}
-.choice-btn:last-child { margin-bottom: 0; }
-.choice-btn .chevron { font-size: 18px; color: var(--text3); transition: transform 0.15s; }
-.choice-btn:active { background: var(--surface-hi); transform: scale(0.98); }
-.choice-btn:active .chevron { transform: translateX(3px); }
-
-/* LOADING */
-.loading-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 18px 20px;
-  display: flex; align-items: center; gap: 14px;
-  animation: msgIn 0.25s ease;
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-}
-.spinner-wrap {
-  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(140deg, #3050d8, #7040cc);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; position: relative;
-}
-.spinner-wrap::after {
-  content: ''; position: absolute; inset: -4px; border-radius: 50%;
-  border: 2px solid transparent;
-  border-top-color: rgba(108,142,255,0.7);
-  border-right-color: rgba(108,142,255,0.3);
-  animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { font-size: 13px; color: var(--text2); font-style: italic; }
-
-/* SECTION DIVIDER */
-.section-divider {
-  display: flex; align-items: center; gap: 12px; margin: 4px 0 16px;
-}
-.section-divider::before, .section-divider::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
-.section-divider span {
-  font-size: 10px; color: var(--text3); letter-spacing: 2px;
-  text-transform: uppercase; font-weight: 500;
-}
-
-/* SAFE AREA */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  main { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
-}
+  textarea::-webkit-scrollbar { width: 4px; }
+  textarea::-webkit-scrollbar-track { background: transparent; }
+  textarea::-webkit-scrollbar-thumb { background: rgba(91,138,240,0.15); border-radius: 2px; }
 </style>
 </head>
 <body>
 
-<div class="bg-orbs">
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-</div>
+<div class="orb1"></div>
+<div class="orb2"></div>
 
-<!-- API KEY GATE -->
-<div id="keyScreen">
-  <div class="key-icon">🗡️</div>
-  <h2>Bias Sword</h2>
-  <p class="key-sub">Bias detection, credibility analysis &amp; the bigger picture. Enter your Anthropic API key to begin.</p>
-
-  <div class="key-field-wrap">
-    <span class="lock-icon">🔑</span>
-    <input id="apiKeyInput" type="password" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+<!-- ═══ KEY SCREEN ═══ -->
+<div id="keyScreen" class="key-screen">
+  <div class="key-logo">
+    <div class="key-badge">🗡️</div>
+    <div class="key-title">Bias Sword</div>
+    <div class="key-sub">Media Analyzer</div>
   </div>
-
-  <label class="remember-row">
-    <input type="checkbox" id="rememberKey">
-    <span>Remember my key on this device</span>
-  </label>
-
-  <button id="saveKeyBtn" onclick="saveKey()">Continue →</button>
-
-  <p class="key-note">
-    Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
-    Your key is stored only on your device.
-  </p>
-  <button onclick="forgetKey()" id="forgetBtn" style="display:none">✕ Forget saved key</button>
+  <div class="key-card">
+    <label class="key-label">Anthropic API Key</label>
+    <input type="password" id="keyInput" class="key-input" placeholder="sk-ant-..." autocomplete="off">
+    <div id="keyError" class="key-error hidden"></div>
+    <div class="key-remember">
+      <input type="checkbox" id="keyRemember" checked>
+      <span>Remember my key on this device</span>
+    </div>
+    <button id="keyForget" class="key-forget hidden" onclick="forgetKey()">Forget saved key</button>
+    <button class="key-submit" onclick="unlockApp()">Enter →</button>
+    <p class="key-hint">Get your key at console.anthropic.com</p>
+  </div>
 </div>
 
-<!-- HEADER -->
-<header>
-  <div class="header-inner">
-    <div class="logo-group">
-      <div class="logo-badge">🗡️</div>
-      <div class="logo-text">
-        <h1>Bias Sword</h1>
-        <p>Media Analyzer</p>
+<!-- ═══ APP ═══ -->
+<div id="appScreen" class="hidden">
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-badge">🗡️</div>
+      <div>
+        <h1 class="header-title">Bias Sword</h1>
+        <p class="header-sub">Media Analyzer</p>
       </div>
+      <button class="key-btn" onclick="showKeyScreen()">🔑</button>
     </div>
-    <button id="headerReset" onclick="resetAll()">↺ New Article</button>
-  </div>
-</header>
-
-<main>
-  <div class="input-card" id="inputCard">
-    <p class="section-label">Analyze any article, post, or transcript</p>
-    <div class="segment">
-      <button class="seg-btn active" onclick="switchTab('text', this)">✏️&nbsp; Paste Text</button>
-      <button class="seg-btn" onclick="switchTab('url', this)">🔗&nbsp; Enter URL</button>
-    </div>
-    <div id="textInput">
-      <textarea id="articleText" placeholder="Paste the article, transcript, social post, or any media content here…"></textarea>
-    </div>
-    <div id="urlInput" style="display:none">
-      <input type="url" id="articleUrl" placeholder="https://…">
-    </div>
-    <button class="analyze-btn" onclick="startAnalysis()">
-      <span>Analyze</span><span style="font-style:normal">→</span>
-    </button>
   </div>
 
-  <div class="section-divider" id="analysisLabel" style="display:none">
-    <span>Analysis</span>
-  </div>
+  <div class="main" id="mainArea">
+    <!-- INPUT -->
+    <div id="inputSection">
+      <div class="segment">
+        <button class="seg-btn active" id="segPaste" onclick="switchMode('paste')">Paste Content</button>
+        <button class="seg-btn" id="segUrl" onclick="switchMode('url')">Enter URL</button>
+      </div>
+      <div id="pasteArea">
+        <textarea id="contentInput" class="content-input" placeholder="Paste article text, transcript, social media post, or any media content here…"></textarea>
+        <div id="wordCount" class="word-count hidden"></div>
+      </div>
+      <div id="urlArea" class="hidden">
+        <input id="urlInput" class="content-input" placeholder="https://example.com/article">
+      </div>
+      <button id="analyzeBtn" class="btn-primary" disabled onclick="startSummary()">🗡️ Analyze</button>
+      <p class="model-hint">⚡ Quick summary via Haiku · Deep analysis via Sonnet</p>
+    </div>
 
-  <div class="messages" id="messages"></div>
-</main>
+    <!-- ERROR -->
+    <div id="errorBox" class="error-box hidden"></div>
+
+    <!-- RESULTS -->
+    <div id="results" class="hidden">
+      <!-- Summary -->
+      <div id="summaryCard" class="card hidden">
+        <div class="card-label-row">
+          <span class="card-icon">⚡</span>
+          <span class="card-label" style="color:var(--blue-light)">Quick Summary</span>
+          <span class="card-via">via Haiku</span>
+        </div>
+        <p id="summaryText" class="card-text"></p>
+        <div id="summaryDots" class="dots hidden"><span></span><span></span><span></span></div>
+      </div>
+
+      <!-- Action buttons after summary -->
+      <div id="summaryActions" class="action-row hidden">
+        <button class="btn-action btn-action-fill" onclick="startDeepAnalysis()">🗡️ Full Analysis</button>
+        <button class="btn-action btn-action-outline" onclick="startSpiritual()">✝️ Spiritual Lens</button>
+      </div>
+
+      <!-- Deep Analysis -->
+      <div id="deepCard" class="deep-card hidden">
+        <div class="deep-header">
+          <span class="card-icon">🗡️</span>
+          <span class="card-label" style="color:var(--blue-light)">Full Analysis</span>
+          <span class="card-via">via Sonnet</span>
+        </div>
+        <div id="deepStreaming" class="deep-streaming hidden">
+          <p id="deepStreamText"></p>
+          <div id="deepDots" class="dots"><span></span><span></span><span></span></div>
+        </div>
+        <div id="deepSections"></div>
+      </div>
+
+      <!-- Spiritual button after analysis -->
+      <div id="spiritualBtn" class="hidden" style="margin-bottom:14px">
+        <button class="btn-action btn-action-outline" style="width:100%" onclick="startSpiritual()">✝️ Spiritual Perspective</button>
+      </div>
+
+      <!-- Spiritual card -->
+      <div id="spiritualCard" class="card card-spiritual hidden">
+        <div class="card-label-row">
+          <span class="card-icon">✝️</span>
+          <span class="card-label">Spiritual Perspective</span>
+        </div>
+        <p id="spiritualText" class="card-text"></p>
+        <div id="spiritualDots" class="dots hidden"><span></span><span></span><span></span></div>
+      </div>
+
+      <!-- Reset -->
+      <button id="resetBtn" class="btn-reset hidden" onclick="resetAll()">← Analyze Something New</button>
+    </div>
+  </div>
+</div>
 
 <script>
-let userApiKey = '';
+// ═══ CONFIG ═══
+const HAIKU = 'claude-haiku-4-5-20251001';
+const SONNET = 'claude-sonnet-4-20250514';
+const STORAGE_KEY = 'biassword_apikey';
 
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('cleareye_apikey');
-  if (saved) {
-    document.getElementById('apiKeyInput').value = saved;
-    document.getElementById('rememberKey').checked = true;
-    document.getElementById('forgetBtn').style.display = 'block';
-  }
-});
+const PERSONA = `You are an experienced political and cultural analyst with deep knowledge of media, rhetoric, and information warfare. You are also a knowledgeable Christian theologian grounded in Scripture. You never lie or make up information or sources. When you don't know something, you say so. When you cite a source, it's real. When you reference Scripture, you use accurate verses and citations.\n\nYou write in plain everyday language. No jargon. You explain things like a smart, honest friend — direct, specific, and never bland.`;
 
-function saveKey() {
-  const val = document.getElementById('apiKeyInput').value.trim();
-  if (!val.startsWith('sk-ant-')) {
-    alert('That doesn\'t look like a valid Anthropic API key (should start with sk-ant-). Please check and try again.');
+const PRINCIPLES = `\nIMPORTANT PRINCIPLES:\n- Always use everyday language. Write like you're talking to a smart friend.\n- Be specific, not vague. Say exactly what the bias is, how it shows up, and what effect it has on the reader.\n- Surface the missing middle. Identify what's being left out by all sides — not just from the opposing political side, but from people caught in the middle, affected parties whose voices aren't part of the debate, and practical realities that complicate both sides' arguments.\n- Acknowledge complexity. Not every piece of content is heavily biased. Not everything is 5GW. Call it like you see it, including when the journalism is solid.\n- Verify before accepting. Claims from governments, militaries, ideological actors, or partisan sources are unverified until independently confirmed. Identify who reported a claim first and what they gain from the narrative.\n- Tool vs. actor. When content attributes outcomes to technology (AI, algorithms, social media, weapons systems), identify who made the human decisions to deploy that technology and authorized its use. Moral and legal responsibility belongs to human beings, not tools.\n- Adversarial reality. Any honest analysis of a contested domain must acknowledge that adversaries are building and using the same capabilities. Coverage that only scrutinizes one side's use is incomplete at best.\n- Never lie or fabricate. Every source, fact, and Bible verse must be real and accurate.\n- Respect copyright. Paraphrase. Keep direct quotes under 15 words.\n- Stay politically neutral. Same standards for all sources.`;
+
+const PROMPT_SUMMARY = PERSONA + `\n\nThe user will give you media content. Deliver a clear, honest summary in 3-5 sentences. Cover what it actually says and claims, where it appears biased or incomplete, what it leaves out, and a quick honest take on trustworthiness.\n\nNo headers. No bullet points. No markdown formatting. Just a tight, conversational paragraph. Plain text only.\n` + PRINCIPLES;
+
+const PROMPT_DEEP = PERSONA + `\n\nThe user will give you media content. Deliver a complete analysis using the sections below. Use plain text with simple section headers (no markdown, no bold, no bullet points — write in paragraphs).\n\nKEY FACTS & SUMMARY\nWhat is this piece actually saying? Core claims, key facts, evidence cited, and what it leaves out.\n\nSOURCE & CREDIBILITY\nWho published this — track record, editorial lean, ownership. Does this piece meet basic standards — sourced claims, named sources, news vs. opinion separation, headline accuracy.\n\nBIAS & RHETORICAL ANALYSIS\nHow is the article framing the issue and what assumptions does the framing sneak in? Loaded language, emotional buttons, structure emphasis, who gets quoted and who doesn't, persuasion techniques at work.\n\nWHAT'S MISSING — THE GRAY AREA\nWhat perspectives, stakeholders, or practical realities are being left out? Where is the issue more complicated than it's being presented? What would a genuinely complete picture include?\n\nBOTTOM LINE\nHow much should you trust this? What should you be cautious about? What would you want to verify? Give it straight.\n\n5TH GENERATION WARFARE ASSESSMENT\nSigns of information warfare: narratives designed to divide or redirect attention, exploitation of identity fault lines, shaping perception rather than reporting reality, undermining trust in other sources, engineering emotional responses that shut down thinking. If the content doesn't show meaningful 5GW indicators, say so. Not everything is information warfare.\n` + PRINCIPLES;
+
+const PROMPT_SPIRITUAL = PERSONA + `\n\nThe user will give you media content and a prior analysis. Add a spiritual perspective in 1-3 paragraphs. Plain text only, no markdown.\n\nCore framework (use as lens, not checklist — never recite these formulaically):\n- We are in a real war between the kingdom of God and the kingdom of darkness. Bigger than earthly politics.\n- The victory has been won through the death, burial, and resurrection of Jesus. The kingdom of darkness still fights.\n- Ephesians 6:12 — the enemies are not flesh and blood. Not politicians, media companies, or people on the other side. The battle is spiritual.\n- Satan is a thief, liar, accuser, and deceiver. Hatred and chaos divide, and divided people forget their first love.\n- The enemy drives complex issues to extremes because extremes produce pride, contempt, and hatred — pulling believers from love.\n- The enemy doesn't care which side you're on. He wins if you hate. He wins if you stop seeing image-bearers.\n- The believer responds with truth, righteousness, the gospel, faith, prayer, perseverance, and love. Think biblically before politically.\n- Jesus is returning for His Bride. Is what I'm consuming preparing me, or pulling me into bitterness? Have I forgotten my first love?\n\nStep above the content. Don't re-analyze the content. Look at the bigger-picture spiritual battle the article brings to the surface. What is the deeper conflict? How is the enemy exploiting it on both sides? What would it look like to engage from love, truth, and faith?\n\nUse Bible verses where they naturally apply — not as proof texts jammed in, but as the living Word speaking to the specific situation.\n\nWrite like you're talking to a thoughtful believer over coffee. Be specific to the issue. Vary the approach. This section should never feel like a formula.`;
+
+// ═══ STATE ═══
+let apiKey = '';
+let inputMode = 'paste';
+let summaryText = '';
+let analysisText = '';
+let spiritualTextVal = '';
+let isStreaming = false;
+
+// ═══ DOM HELPERS ═══
+const $ = id => document.getElementById(id);
+const show = id => $(id)?.classList.remove('hidden');
+const hide = id => $(id)?.classList.add('hidden');
+
+// ═══ KEY MANAGEMENT ═══
+function initKey() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) { $('keyInput').value = saved; show('keyForget'); }
+  } catch(e) {}
+  $('keyInput').addEventListener('keydown', e => { if (e.key === 'Enter') unlockApp(); });
+}
+
+function unlockApp() {
+  const k = $('keyInput').value.trim();
+  if (!k.startsWith('sk-ant-')) {
+    $('keyError').textContent = 'Key should start with sk-ant-';
+    show('keyError');
     return;
   }
-  userApiKey = val;
-  if (document.getElementById('rememberKey').checked) {
-    localStorage.setItem('cleareye_apikey', val);
-  } else {
-    localStorage.removeItem('cleareye_apikey');
+  hide('keyError');
+  apiKey = k;
+  if ($('keyRemember').checked) {
+    try { localStorage.setItem(STORAGE_KEY, k); } catch(e) {}
   }
-  const screen = document.getElementById('keyScreen');
-  screen.style.opacity = '0';
-  setTimeout(() => screen.style.display = 'none', 350);
+  hide('keyScreen');
+  show('appScreen');
 }
 
 function forgetKey() {
-  localStorage.removeItem('cleareye_apikey');
-  document.getElementById('apiKeyInput').value = '';
-  document.getElementById('rememberKey').checked = false;
-  document.getElementById('forgetBtn').style.display = 'none';
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  $('keyInput').value = '';
+  hide('keyForget');
 }
 
-document.getElementById('apiKeyInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') saveKey();
-});
-
-const SYSTEM_PROMPT = `You are an experienced political and cultural analyst with deep knowledge of media, rhetoric, and information warfare. You are also a knowledgeable Christian theologian grounded in Scripture. You never lie or make up information or sources. When you don't know something, you say so. When you cite a source, it's real. When you reference Scripture, you use accurate verses and citations.
-
-You write in plain everyday language. No jargon. Like a smart, honest friend — direct, specific, and never bland.
-
-Your task: analyze media content for bias, credibility, key facts, rhetorical techniques, and 5th generation warfare indicators. The user will provide text or a URL to an article, post, transcript, or other media content.
-
-OPENING SUMMARY (your first response):
-Write a tight 3-5 sentence paragraph in plain everyday language. Cover what the article says, where it appears biased or incomplete, and your honest take. No headers. No bullet points. No markdown formatting. Just a conversational paragraph.
-
-End your response with exactly this line on its own:
-CHOICES:full_or_done
-
-FULL ANALYSIS (when requested):
-Deliver section-by-section. Use these exact section headers (prefixed with ###):
-### Key Facts & Summary
-### Source & Credibility
-### Bias & Rhetorical Analysis
-### What's Missing — The Gray Area
-### Bottom Line
-### 5th Generation Warfare Assessment
-
-After full analysis, end with:
-CHOICES:spiritual
-
-SPIRITUAL PERSPECTIVE (when requested):
-1-3 paragraphs. Fresh, specific, conversational — like talking to a thoughtful believer over coffee. Use accurate Bible verses (book, chapter, verse) naturally where they fit. Never formulaic.
-
-End with:
-CHOICES:done
-
-When you see CHOICES:done, respond with exactly: DONE
-
-CRITICAL ANALYTICAL PRINCIPLES — apply these throughout every analysis:
-
-Demand verification before accepting claims. When a claim originates from a hostile or interested party — a government, military, or ideological actor — treat it as unverified until confirmed by independent sources. Ask: who reported this first, and what do they gain from the narrative? Iran reporting that Israel hit a school with an AI-guided weapon is a claim that requires independent verification, not a fact to lead with.
-
-Distinguish the tool from the actor. Blaming AI for civilian casualties follows the same false logic as blaming a gun instead of the person pulling the trigger. Technology is a tool. Moral responsibility belongs to the human beings who deploy it, authorize it, and set the rules of engagement. An analysis that attributes fault to AI rather than to decision-makers is obscuring accountability, not illuminating it.
-
-Acknowledge adversarial reality. Our adversaries are not standing still. Any honest analysis of AI in warfare must account for the fact that hostile nations are actively developing and deploying AI weapons systems against us. A narrative that only scrutinizes Western or allied AI use while ignoring adversarial AI development is incomplete at best and manipulative at worst.
-
-Keep all responses plain text — no markdown bold/italic, no bullet dashes, just clean prose and the ### headers for full analysis sections only.`;
-
-let conversationHistory = [];
-let currentMode = 'text';
-let awaitingChoice = null;
-let articleContent = '';
-
-function switchTab(mode, btn) {
-  currentMode = mode;
-  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('textInput').style.display = mode === 'text' ? 'block' : 'none';
-  document.getElementById('urlInput').style.display = mode === 'url' ? 'block' : 'none';
+function showKeyScreen() {
+  hide('appScreen');
+  show('keyScreen');
 }
 
-async function startAnalysis() {
-  const text = currentMode === 'text'
-    ? document.getElementById('articleText').value.trim()
-    : document.getElementById('articleUrl').value.trim();
-  if (!text) { alert('Please paste an article or enter a URL first.'); return; }
-
-  articleContent = text;
-  document.getElementById('inputCard').style.display = 'none';
-  document.getElementById('analysisLabel').style.display = 'flex';
-  document.getElementById('headerReset').style.display = 'block';
-
-  const userMsg = currentMode === 'text'
-    ? `Please analyze this article:\n\n${text}`
-    : `Please analyze this article: ${text}`;
-
-  conversationHistory.push({ role: 'user', content: userMsg });
-  addUserBubble(currentMode === 'text' ? '📄 Article submitted for analysis' : `🔗 ${text}`);
-  await callClaude('Reading between the lines…');
+// ═══ INPUT ═══
+function switchMode(mode) {
+  inputMode = mode;
+  if (mode === 'paste') {
+    $('segPaste').classList.add('active');
+    $('segUrl').classList.remove('active');
+    show('pasteArea'); hide('urlArea');
+  } else {
+    $('segUrl').classList.add('active');
+    $('segPaste').classList.remove('active');
+    hide('pasteArea'); show('urlArea');
+  }
+  checkInput();
 }
 
-async function handleChoice(choice, displayLabel) {
-  awaitingChoice = null;
-  removeChoices();
-  addUserBubble(displayLabel);
-  conversationHistory.push({ role: 'user', content: choice });
-  await callClaude('Digging deeper…');
+function checkInput() {
+  const has = inputMode === 'paste'
+    ? $('contentInput').value.trim().length > 0
+    : $('urlInput').value.trim().length > 0;
+  $('analyzeBtn').disabled = !has;
 }
 
-async function callClaude(loadingMsg) {
-  const loadingEl = addLoading(loadingMsg);
-  try {
-    let messages = [...conversationHistory];
+function getPayload() {
+  if (inputMode === 'url' && $('urlInput').value.trim()) {
+    return 'Please fetch and analyze the content at this URL: ' + $('urlInput').value.trim();
+  }
+  return $('contentInput').value.trim();
+}
 
-    while (true) {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': userApiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 2000,
-          system: SYSTEM_PROMPT,
-          tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-          messages
-        })
-      });
+function updateWordCount() {
+  const words = $('contentInput').value.trim().split(/\s+/).filter(Boolean).length;
+  if (words > 0) {
+    $('wordCount').textContent = words.toLocaleString() + ' words';
+    show('wordCount');
+  } else {
+    hide('wordCount');
+  }
+}
 
-      const data = await response.json();
-      const toolUseBlocks = data.content?.filter(b => b.type === 'tool_use') || [];
+// ═══ API CALL ═══
+async function callClaude(model, systemPrompt, userContent, onChunk, useWebSearch) {
+  const body = {
+    model, max_tokens: 4000, stream: true,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userContent }],
+  };
+  if (useWebSearch) {
+    body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
+  }
 
-      if (toolUseBlocks.length > 0) {
-        const loadingTextEl = loadingEl.querySelector('.loading-text');
-        if (loadingTextEl) loadingTextEl.textContent = 'Fetching the article…';
-        messages.push({ role: 'assistant', content: data.content });
-        const toolResults = data.content
-          .filter(b => b.type === 'tool_use')
-          .map(block => ({
-            type: 'tool_result',
-            tool_use_id: block.id,
-            content: JSON.stringify(block.output || block.input || '')
-          }));
-        messages.push({ role: 'user', content: toolResults });
-        continue;
-      }
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify(body),
+  });
 
-      loadingEl.remove();
-      const rawText = data.content?.map(b => b.type === 'text' ? b.text : '').join('') || '';
-      const [mainText, choicesTag] = splitOnChoices(rawText);
-      if (mainText.trim()) {
-        addAssistantBubble(mainText.trim());
-        conversationHistory.push({ role: 'assistant', content: data.content });
-      }
-      if (choicesTag) renderChoices(choicesTag);
-      break;
+  if (!resp.ok) throw new Error('API error: ' + resp.status);
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let full = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const chunk = decoder.decode(value, { stream: true });
+    for (const line of chunk.split('\n')) {
+      if (!line.startsWith('data: ')) continue;
+      const data = line.slice(6);
+      if (data === '[DONE]') continue;
+      try {
+        const p = JSON.parse(data);
+        if (p.type === 'content_block_delta' && p.delta?.text) {
+          full += p.delta.text;
+          onChunk(full);
+        }
+      } catch(e) {}
     }
+  }
+  return full;
+}
 
-  } catch (err) {
-    loadingEl.remove();
-    addAssistantBubble('Something went wrong reaching the analysis service. Please try again.');
-    console.error(err);
+// ═══ SECTION PARSER ═══
+function parseSections(text) {
+  const defs = [
+    { key:'facts', title:'Key Facts & Summary', icon:'📋', re:/KEY FACTS & SUMMARY/i },
+    { key:'cred', title:'Source & Credibility', icon:'🔍', re:/SOURCE & CREDIBILITY/i },
+    { key:'bias', title:'Bias & Rhetorical Analysis', icon:'🎯', re:/BIAS & RHETORICAL ANALYSIS/i },
+    { key:'missing', title:"What's Missing", icon:'🌫️', re:/WHAT'S MISSING/i },
+    { key:'bottom', title:'Bottom Line', icon:'⚖️', re:/BOTTOM LINE/i },
+    { key:'war', title:'5GW Assessment', icon:'🛡️', re:/5TH GENERATION WARFARE|5GW/i },
+  ];
+  const found = defs.map(d => { const m = text.match(d.re); return m ? {...d, idx: m.index} : null; })
+    .filter(Boolean).sort((a,b) => a.idx - b.idx);
+  if (!found.length) return null;
+  return found.map((s, i) => {
+    const end = i+1 < found.length ? found[i+1].idx : text.length;
+    const content = text.slice(s.idx, end).replace(s.re, '').replace(/^[\s\n—\-:]+/, '').trim();
+    return { key:s.key, title:s.title, icon:s.icon, content };
+  });
+}
+
+function renderSections(sections) {
+  const container = $('deepSections');
+  container.innerHTML = '';
+  sections.forEach(s => {
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <button class="section-btn" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.section-arrow').classList.toggle('open')">
+        <span class="section-icon">${s.icon}</span>
+        <span class="section-title">${s.title}</span>
+        <span class="section-arrow open">▼</span>
+      </button>
+      <div class="section-body"><p>${escHtml(s.content)}</p></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═══ FLOW ═══
+function showError(msg) { $('errorBox').textContent = msg; show('errorBox'); }
+function clearError() { hide('errorBox'); }
+
+async function startSummary() {
+  const payload = getPayload();
+  if (!payload) return;
+  clearError();
+  summaryText = ''; analysisText = ''; spiritualTextVal = '';
+  isStreaming = true;
+
+  hide('inputSection');
+  show('results');
+  show('summaryCard');
+  show('summaryDots');
+  hide('summaryActions'); hide('deepCard'); hide('spiritualBtn'); hide('spiritualCard'); hide('resetBtn');
+  $('summaryText').textContent = '';
+  $('deepSections').innerHTML = '';
+
+  const useSearch = inputMode === 'url' && $('urlInput').value.trim();
+  try {
+    summaryText = await callClaude(HAIKU, PROMPT_SUMMARY, payload,
+      text => { $('summaryText').textContent = text; }, useSearch);
+    hide('summaryDots');
+    show('summaryActions');
+    show('resetBtn');
+    isStreaming = false;
+  } catch(e) {
+    hide('summaryDots');
+    showError(e.message);
+    show('inputSection'); hide('results');
+    isStreaming = false;
   }
 }
 
-function splitOnChoices(text) {
-  const idx = text.indexOf('CHOICES:');
-  if (idx === -1) return [text, null];
-  return [text.slice(0, idx).trim(), text.slice(idx + 8).trim()];
+async function startDeepAnalysis() {
+  clearError();
+  analysisText = '';
+  isStreaming = true;
+
+  hide('summaryActions');
+  show('deepCard');
+  show('deepStreaming');
+  hide('resetBtn');
+  $('deepStreamText').textContent = '';
+  $('deepSections').innerHTML = '';
+  show('deepDots');
+
+  const payload = getPayload();
+  const useSearch = inputMode === 'url' && $('urlInput').value.trim();
+  try {
+    analysisText = await callClaude(SONNET, PROMPT_DEEP, payload,
+      text => { $('deepStreamText').textContent = text; }, useSearch);
+    hide('deepDots');
+    const sections = parseSections(analysisText);
+    if (sections) {
+      hide('deepStreaming');
+      renderSections(sections);
+    }
+    show('spiritualBtn');
+    show('resetBtn');
+    isStreaming = false;
+  } catch(e) {
+    hide('deepDots');
+    showError(e.message);
+    show('summaryActions');
+    hide('deepCard');
+    show('resetBtn');
+    isStreaming = false;
+  }
 }
 
-function renderChoices(tag) {
-  const container = document.getElementById('messages');
-  const card = document.createElement('div');
-  card.className = 'choices-card';
-  card.id = 'choicesCard';
+async function startSpiritual() {
+  clearError();
+  spiritualTextVal = '';
+  isStreaming = true;
 
-  if (tag === 'full_or_done') {
-    card.innerHTML = `
-      <p class="choices-question">Want the full analysis?</p>
-      <button class="choice-btn" onclick="handleChoice('Yes, please give me the full analysis.','Full analysis')"><span>Yes, full analysis</span><span class="chevron">›</span></button>
-      <button class="choice-btn" onclick="handleChoice('No thanks.','No thanks')"><span>No thanks</span><span class="chevron">›</span></button>`;
-    } else if (tag === 'spiritual') {
-    card.innerHTML = `
-      <p class="choices-question">Would you like a spiritual perspective?</p>
-      <button class="choice-btn" onclick="handleChoice('Yes, please give me a spiritual perspective.','Yes — spiritual perspective')"><span>Yes, show me</span><span class="chevron">›</span></button>
-      <button class="choice-btn" onclick="handleChoice('No thanks.','No thanks')"><span>No thanks</span><span class="chevron">›</span></button>`;
-  } else if (tag === 'done') {
-    return;
+  hide('summaryActions'); hide('spiritualBtn');
+  show('spiritualCard');
+  show('spiritualDots');
+  hide('resetBtn');
+  $('spiritualText').textContent = '';
+
+  const prior = analysisText || summaryText;
+  let base;
+  if (inputMode === 'url' && $('urlInput').value.trim()) {
+    base = 'Original content URL: ' + $('urlInput').value.trim() + '\n\nPrior analysis:\n' + prior;
+  } else {
+    base = 'Original content:\n' + $('contentInput').value.trim().slice(0, 2000) + '\n\nPrior analysis:\n' + prior;
   }
 
-  container.appendChild(card);
-  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function removeChoices() {
-  const el = document.getElementById('choicesCard');
-  if (el) el.remove();
-}
-
-function addUserBubble(text) {
-  const el = document.createElement('div');
-  el.className = 'msg user-msg';
-  el.innerHTML = `<div class="msg-label user"><span class="dot"></span>You</div><div class="msg-body">${escapeHtml(text)}</div>`;
-  document.getElementById('messages').appendChild(el);
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function addAssistantBubble(text) {
-  const el = document.createElement('div');
-  el.className = 'msg analyst-msg';
-  const formatted = text
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/\n/g, '<br>');
-  el.innerHTML = `<div class="msg-label analyst"><span class="dot"></span>Bias Sword Analyst</div><div class="msg-body">${formatted}</div>`;
-  document.getElementById('messages').appendChild(el);
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function addLoading(msg) {
-  const el = document.createElement('div');
-  el.className = 'loading-card';
-  el.innerHTML = `<div class="spinner-wrap">🗡️</div><span class="loading-text">${escapeHtml(msg)}</span>`;
-  document.getElementById('messages').appendChild(el);
-  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  return el;
-}
-
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  try {
+    spiritualTextVal = await callClaude(SONNET, PROMPT_SPIRITUAL, base,
+      text => { $('spiritualText').textContent = text; }, false);
+    hide('spiritualDots');
+    show('resetBtn');
+    isStreaming = false;
+  } catch(e) {
+    hide('spiritualDots');
+    showError(e.message);
+    show('resetBtn');
+    isStreaming = false;
+  }
 }
 
 function resetAll() {
-  conversationHistory = [];
-  articleContent = '';
-  awaitingChoice = null;
-  document.getElementById('messages').innerHTML = '';
-  document.getElementById('inputCard').style.display = 'block';
-  document.getElementById('analysisLabel').style.display = 'none';
-  document.getElementById('headerReset').style.display = 'none';
-  document.getElementById('articleText').value = '';
-  document.getElementById('articleUrl').value = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  $('contentInput').value = '';
+  $('urlInput').value = '';
+  summaryText = ''; analysisText = ''; spiritualTextVal = '';
+  hide('results'); hide('errorBox');
+  hide('summaryCard'); hide('summaryActions'); hide('deepCard');
+  hide('spiritualBtn'); hide('spiritualCard'); hide('resetBtn');
+  hide('wordCount');
+  $('deepSections').innerHTML = '';
+  show('inputSection');
+  checkInput();
 }
+
+// ═══ INIT ═══
+window.addEventListener('DOMContentLoaded', () => {
+  initKey();
+  $('contentInput').addEventListener('input', () => { checkInput(); updateWordCount(); });
+  $('urlInput').addEventListener('input', checkInput);
+  $('urlInput').addEventListener('keydown', e => { if (e.key === 'Enter') startSummary(); });
+});
 </script>
 </body>
 </html>
