@@ -2,352 +2,469 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Clear Eye — Media Analyzer</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Clear Eye</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #0f0e0c;
-    --paper: #f5f0e8;
-    --cream: #ede7d9;
-    --accent: #c0392b;
-    --accent2: #8b6914;
-    --muted: #6b6355;
-    --border: #c8bfad;
-    --card: #faf7f2;
-    --shadow: rgba(15,14,12,0.12);
-  }
+:root {
+  --bg0: #080a12;
+  --bg1: #0d1020;
+  --surface: rgba(255,255,255,0.055);
+  --surface-hi: rgba(255,255,255,0.09);
+  --border: rgba(255,255,255,0.1);
+  --border-hi: rgba(255,255,255,0.18);
+  --text: #eef0ff;
+  --text2: rgba(238,240,255,0.62);
+  --text3: rgba(238,240,255,0.35);
+  --accent: #6c8eff;
+  --accent2: #b48bff;
+  --gold: #f0b429;
+  --radius: 18px;
+  --radius-sm: 13px;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
 
-  body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg0);
+  color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* HEADER */
-  header {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 20px 20px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 3px solid var(--accent);
-  }
-  .masthead {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 2px;
-  }
-  .masthead h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    line-height: 1;
-  }
-  .masthead .eyelet {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--accent);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-  .tagline {
-    font-size: 11px;
-    color: #9a9080;
-    font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: 0.5px;
-  }
+/* BG ORBS */
+.bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.orb { position: absolute; border-radius: 50%; filter: blur(90px); }
+.orb1 { width: 380px; height: 380px; background: radial-gradient(circle, #2040c0 0%, transparent 70%); opacity: 0.22; top: -120px; left: -100px; animation: drift1 16s ease-in-out infinite alternate; }
+.orb2 { width: 300px; height: 300px; background: radial-gradient(circle, #6020a0 0%, transparent 70%); opacity: 0.18; top: 35%; right: -80px; animation: drift2 20s ease-in-out infinite alternate; }
+.orb3 { width: 240px; height: 240px; background: radial-gradient(circle, #0870c0 0%, transparent 70%); opacity: 0.15; bottom: 25%; left: 10%; animation: drift3 24s ease-in-out infinite alternate; }
+@keyframes drift1 { to { transform: translate(30px, 50px); } }
+@keyframes drift2 { to { transform: translate(-25px, 70px); } }
+@keyframes drift3 { to { transform: translate(50px, -40px); } }
 
-  /* MAIN */
-  main {
-    padding: 20px 16px 100px;
-    max-width: 520px;
-    margin: 0 auto;
-  }
+/* KEY SCREEN */
+#keyScreen {
+  position: fixed; inset: 0; z-index: 999;
+  background: linear-gradient(160deg, #0c0f22 0%, #070910 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 28px;
+  transition: opacity 0.35s ease;
+}
+.key-icon {
+  width: 76px; height: 76px; border-radius: 22px;
+  background: linear-gradient(140deg, #2f52d4 0%, #7040cc 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin-bottom: 22px;
+  box-shadow: 0 16px 48px rgba(80,120,255,0.4), 0 0 0 1px rgba(255,255,255,0.1) inset;
+}
+#keyScreen h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 34px; font-weight: 700; letter-spacing: -0.5px;
+  color: var(--text); margin-bottom: 8px;
+}
+.key-sub {
+  font-size: 14px; color: var(--text2); line-height: 1.6;
+  text-align: center; margin-bottom: 32px; max-width: 280px;
+}
+.key-field-wrap {
+  width: 100%; max-width: 340px; position: relative; margin-bottom: 10px;
+}
+.key-field-wrap .lock-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 16px; opacity: 0.4; pointer-events: none;
+}
+#apiKeyInput {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 14px 14px 42px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--text);
+  outline: none; letter-spacing: 0.3px;
+  transition: border-color 0.2s, background 0.2s;
+  -webkit-appearance: none;
+}
+#apiKeyInput:focus { border-color: var(--accent); background: rgba(108,142,255,0.07); }
+#apiKeyInput::placeholder { color: var(--text3); font-size: 13px; }
 
-  /* INPUT CARD */
-  .input-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 18px;
-    margin-bottom: 16px;
-    box-shadow: 2px 3px 0 var(--shadow);
-  }
-  .input-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--accent2);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    display: block;
-  }
-  .tab-row {
-    display: flex;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
-  .tab-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 8px 4px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    cursor: pointer;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: all 0.15s;
-  }
-  .tab-btn.active {
-    background: var(--ink);
-    color: var(--paper);
-  }
-  textarea, input[type="url"] {
-    width: 100%;
-    background: var(--paper);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 12px;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 14px;
-    color: var(--ink);
-    resize: none;
-    outline: none;
-    transition: border-color 0.15s;
-    -webkit-appearance: none;
-  }
-  textarea:focus, input[type="url"]:focus { border-color: var(--accent2); }
-  textarea { height: 140px; }
-  input[type="url"] { height: 46px; }
-  ::placeholder { color: #b0a898; font-style: italic; font-size: 13px; }
+.remember-row {
+  display: flex; align-items: center; gap: 9px;
+  max-width: 340px; width: 100%; margin-bottom: 16px; cursor: pointer;
+}
+.remember-row input[type="checkbox"] {
+  width: 18px; height: 18px; accent-color: var(--accent);
+  cursor: pointer; border-radius: 5px; flex-shrink: 0;
+}
+.remember-row span { font-size: 13px; color: var(--text2); }
 
-  .analyze-btn {
-    width: 100%;
-    margin-top: 12px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 3px;
-    padding: 14px;
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
-    font-weight: 700;
-    font-style: italic;
-    cursor: pointer;
-    letter-spacing: 0.3px;
-    transition: all 0.15s;
-    box-shadow: 2px 2px 0 rgba(192,57,43,0.3);
-  }
-  .analyze-btn:hover { background: #a93226; transform: translateY(-1px); }
-  .analyze-btn:active { transform: translateY(0); }
-  .analyze-btn:disabled { background: #c8bfad; cursor: not-allowed; transform: none; box-shadow: none; }
+#saveKeyBtn {
+  width: 100%; max-width: 340px;
+  background: linear-gradient(135deg, #3050d8 0%, #6840d0 100%);
+  color: white; border: none; border-radius: var(--radius-sm);
+  padding: 15px; font-family: 'DM Sans', sans-serif;
+  font-size: 16px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 8px 28px rgba(80,120,255,0.4);
+  transition: opacity 0.15s, transform 0.1s;
+}
+#saveKeyBtn:active { opacity: 0.85; transform: scale(0.98); }
 
-  /* MESSAGES */
-  .messages { display: flex; flex-direction: column; gap: 14px; }
+.key-note {
+  font-size: 12px; color: var(--text3); margin-top: 16px;
+  text-align: center; max-width: 300px; line-height: 1.7;
+}
+.key-note a { color: var(--accent2); text-decoration: none; }
 
-  .msg {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px;
-    box-shadow: 1px 2px 0 var(--shadow);
-    animation: slideIn 0.25s ease;
-  }
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+#forgetBtn {
+  background: transparent; border: none; font-size: 12px;
+  color: var(--text3); margin-top: 12px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: color 0.15s;
+}
+#forgetBtn:active { color: #f87171; }
 
-  .msg-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
-  }
-  .msg-label.analyst { color: var(--accent); }
-  .msg-label.user { color: var(--accent2); }
+/* HEADER */
+header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(8,10,18,0.8);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+}
+.header-inner {
+  max-width: 520px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo-group { display: flex; align-items: center; gap: 12px; }
+.logo-badge {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(140deg, #2f52d4, #7040cc);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  box-shadow: 0 3px 14px rgba(80,120,255,0.35);
+}
+.logo-text h1 {
+  font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700;
+  letter-spacing: -0.3px; color: var(--text); line-height: 1;
+}
+.logo-text p {
+  font-size: 10px; color: var(--accent); letter-spacing: 1.5px;
+  text-transform: uppercase; font-weight: 500; margin-top: 2px;
+}
+#headerReset {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 7px 15px;
+  font-size: 12px; color: var(--text2); font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; display: none;
+  transition: background 0.15s;
+}
+#headerReset:active { background: var(--surface-hi); }
 
-  .msg-body {
-    font-size: 14.5px;
-    line-height: 1.7;
-    color: #2a2520;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
+/* MAIN */
+main {
+  position: relative; z-index: 1;
+  padding: 22px 16px 120px;
+  max-width: 520px; margin: 0 auto;
+}
 
-  /* Section headings inside analysis */
-  .msg-body h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    font-weight: 700;
-    margin: 14px 0 6px;
-    color: var(--ink);
-    border-left: 3px solid var(--accent);
-    padding-left: 8px;
-  }
+/* INPUT CARD */
+.input-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  margin-bottom: 20px;
+  animation: cardIn 0.5s cubic-bezier(0.34,1.4,0.64,1);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-  /* CHOICES */
-  .choices-card {
-    background: var(--cream);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px 16px;
-    animation: slideIn 0.25s ease;
-  }
-  .choices-question {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px;
-    font-weight: 700;
-    font-style: italic;
-    margin-bottom: 10px;
-    color: var(--ink);
-  }
-  .choice-btn {
-    display: block;
-    width: 100%;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 11px 14px;
-    margin-bottom: 7px;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 13.5px;
-    color: var(--ink);
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.12s;
-    box-shadow: 1px 1px 0 var(--shadow);
-  }
-  .choice-btn:last-child { margin-bottom: 0; }
-  .choice-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  .choice-btn:active { transform: scale(0.98); }
+.section-label {
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px;
+}
 
-  /* LOADING */
-  .loading-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 20px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    animation: slideIn 0.2s ease;
-  }
-  .loading-dots {
-    display: flex;
-    gap: 5px;
-  }
-  .loading-dots span {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: bounce 1.2s ease-in-out infinite;
-  }
-  .loading-dots span:nth-child(2) { animation-delay: 0.2s; background: var(--accent2); }
-  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce {
-    0%,80%,100% { transform: scale(0.6); opacity: 0.4; }
-    40% { transform: scale(1); opacity: 1; }
-  }
-  .loading-text {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-  }
+/* Segment control */
+.segment {
+  display: flex; background: rgba(0,0,0,0.35);
+  border-radius: 11px; padding: 3px; margin-bottom: 14px;
+  border: 1px solid var(--border);
+}
+.seg-btn {
+  flex: 1; background: transparent; border: none;
+  padding: 9px 10px; border-radius: 9px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--text3); cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.34,1.2,0.64,1);
+}
+.seg-btn.active {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.5);
+}
 
-  /* RESET */
-  .reset-bar {
-    text-align: center;
-    margin-top: 18px;
-  }
-  .reset-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 8px 20px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    cursor: pointer;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: all 0.15s;
-  }
-  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+textarea, input[type="url"] {
+  width: 100%; background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 14px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--text); resize: none; outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  -webkit-appearance: none; line-height: 1.55;
+}
+textarea:focus, input[type="url"]:focus {
+  border-color: var(--accent); background: rgba(108,142,255,0.07);
+}
+textarea { height: 128px; }
+input[type="url"] { height: 48px; }
+::placeholder { color: var(--text3); font-size: 13px; font-style: italic; }
 
-  /* DIVIDER */
-  .rule {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 4px 0 14px;
-  }
-  .rule-label {
-    text-align: center;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    color: var(--border);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
+.analyze-btn {
+  width: 100%; margin-top: 14px;
+  background: linear-gradient(135deg, #3050d8 0%, #6840d0 100%);
+  color: white; border: none; border-radius: var(--radius-sm); padding: 15px;
+  font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; font-style: italic;
+  cursor: pointer; letter-spacing: 0.2px;
+  box-shadow: 0 8px 28px rgba(80,120,255,0.4);
+  transition: all 0.12s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.analyze-btn:active { transform: scale(0.97); opacity: 0.88; }
+
+/* MESSAGES */
+.messages { display: flex; flex-direction: column; gap: 12px; }
+
+.msg {
+  border-radius: var(--radius); padding: 16px 18px;
+  border: 1px solid var(--border);
+  animation: msgIn 0.4s cubic-bezier(0.34,1.3,0.64,1);
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.msg.user-msg {
+  background: linear-gradient(135deg, rgba(48,80,216,0.22), rgba(104,64,208,0.16));
+  border-color: rgba(108,142,255,0.22); margin-left: 28px;
+}
+.msg.analyst-msg {
+  background: var(--surface);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+
+.msg-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; margin-bottom: 9px;
+  display: flex; align-items: center; gap: 7px;
+}
+.msg-label.user { color: var(--accent); }
+.msg-label.analyst { color: var(--accent2); }
+.dot {
+  width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+}
+.msg-label.user .dot { background: var(--accent); }
+.msg-label.analyst .dot { background: var(--accent2); box-shadow: 0 0 7px var(--accent2); }
+
+.msg-body {
+  font-size: 14.5px; line-height: 1.72;
+  color: rgba(238,240,255,0.85); white-space: pre-wrap; word-break: break-word;
+}
+.msg-body h3 {
+  font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; font-style: italic;
+  margin: 16px 0 7px; color: var(--text);
+  display: flex; align-items: center; gap: 9px;
+}
+.msg-body h3::before {
+  content: ''; width: 3px; height: 15px; border-radius: 2px; flex-shrink: 0;
+  background: linear-gradient(to bottom, var(--accent), var(--accent2));
+}
+
+/* CHOICES */
+.choices-card {
+  background: rgba(15,18,32,0.75);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  animation: msgIn 0.4s cubic-bezier(0.34,1.3,0.64,1);
+}
+.choices-question {
+  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; font-style: italic;
+  color: var(--text); margin-bottom: 12px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.choice-btn {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 13px 16px; margin-bottom: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  color: var(--text); text-align: left; cursor: pointer; transition: all 0.15s;
+}
+.choice-btn:last-child { margin-bottom: 0; }
+.choice-btn .chevron { font-size: 18px; color: var(--text3); transition: transform 0.15s; }
+.choice-btn:active { background: var(--surface-hi); transform: scale(0.98); }
+.choice-btn:active .chevron { transform: translateX(3px); }
+
+/* LOADING */
+.loading-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  animation: msgIn 0.25s ease;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.spinner-wrap {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(140deg, #3050d8, #7040cc);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; position: relative;
+}
+.spinner-wrap::after {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: rgba(108,142,255,0.7);
+  border-right-color: rgba(108,142,255,0.3);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--text2); font-style: italic; }
+
+/* SECTION DIVIDER */
+.section-divider {
+  display: flex; align-items: center; gap: 12px; margin: 4px 0 16px;
+}
+.section-divider::before, .section-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.section-divider span {
+  font-size: 10px; color: var(--text3); letter-spacing: 2px;
+  text-transform: uppercase; font-weight: 500;
+}
+
+/* SAFE AREA */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  main { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="masthead">
-    <h1>Clear Eye</h1>
-    <span class="eyelet">// Media Analyzer</span>
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- API KEY GATE -->
+<div id="keyScreen">
+  <div class="key-icon">👁</div>
+  <h2>Clear Eye</h2>
+  <p class="key-sub">Bias detection, credibility analysis &amp; the bigger picture. Enter your Anthropic API key to begin.</p>
+
+  <div class="key-field-wrap">
+    <span class="lock-icon">🔑</span>
+    <input id="apiKeyInput" type="password" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
   </div>
-  <p class="tagline">See through the noise — bias, rhetoric & the bigger picture</p>
+
+  <label class="remember-row">
+    <input type="checkbox" id="rememberKey">
+    <span>Remember my key on this device</span>
+  </label>
+
+  <button id="saveKeyBtn" onclick="saveKey()">Continue →</button>
+
+  <p class="key-note">
+    Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
+    Your key is stored only on your device.
+  </p>
+  <button onclick="forgetKey()" id="forgetBtn" style="display:none">✕ Forget saved key</button>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-group">
+      <div class="logo-badge">👁</div>
+      <div class="logo-text">
+        <h1>Clear Eye</h1>
+        <p>Media Analyzer</p>
+      </div>
+    </div>
+    <button id="headerReset" onclick="resetAll()">↺ New Article</button>
+  </div>
 </header>
 
 <main>
-  <!-- INPUT -->
   <div class="input-card" id="inputCard">
-    <span class="input-label">Paste article or enter URL</span>
-    <div class="tab-row">
-      <button class="tab-btn active" onclick="switchTab('text')">Text / Paste</button>
-      <button class="tab-btn" onclick="switchTab('url')">URL</button>
+    <p class="section-label">Analyze any article, post, or transcript</p>
+    <div class="segment">
+      <button class="seg-btn active" onclick="switchTab('text', this)">✏️&nbsp; Paste Text</button>
+      <button class="seg-btn" onclick="switchTab('url', this)">🔗&nbsp; Enter URL</button>
     </div>
     <div id="textInput">
-      <textarea id="articleText" placeholder="Paste the article, transcript, post, or any media content here…"></textarea>
+      <textarea id="articleText" placeholder="Paste the article, transcript, social post, or any media content here…"></textarea>
     </div>
     <div id="urlInput" style="display:none">
       <input type="url" id="articleUrl" placeholder="https://…">
     </div>
-    <button class="analyze-btn" onclick="startAnalysis()">Analyze →</button>
+    <button class="analyze-btn" onclick="startAnalysis()">
+      <span>Analyze</span><span style="font-style:normal">→</span>
+    </button>
   </div>
 
-  <hr class="rule">
-  <p class="rule-label" id="analysisLabel" style="display:none">— Analysis —</p>
+  <div class="section-divider" id="analysisLabel" style="display:none">
+    <span>Analysis</span>
+  </div>
 
-  <!-- CONVERSATION -->
   <div class="messages" id="messages"></div>
-
-  <div id="resetBar" class="reset-bar" style="display:none">
-    <button class="reset-btn" onclick="resetAll()">↺ New Article</button>
-  </div>
 </main>
 
 <script>
+let userApiKey = '';
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('cleareye_apikey');
+  if (saved) {
+    document.getElementById('apiKeyInput').value = saved;
+    document.getElementById('rememberKey').checked = true;
+    document.getElementById('forgetBtn').style.display = 'block';
+  }
+});
+
+function saveKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val.startsWith('sk-ant-')) {
+    alert('That doesn\'t look like a valid Anthropic API key (should start with sk-ant-). Please check and try again.');
+    return;
+  }
+  userApiKey = val;
+  if (document.getElementById('rememberKey').checked) {
+    localStorage.setItem('cleareye_apikey', val);
+  } else {
+    localStorage.removeItem('cleareye_apikey');
+  }
+  const screen = document.getElementById('keyScreen');
+  screen.style.opacity = '0';
+  setTimeout(() => screen.style.display = 'none', 350);
+}
+
+function forgetKey() {
+  localStorage.removeItem('cleareye_apikey');
+  document.getElementById('apiKeyInput').value = '';
+  document.getElementById('rememberKey').checked = false;
+  document.getElementById('forgetBtn').style.display = 'none';
+}
+
+document.getElementById('apiKeyInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') saveKey();
+});
+
 const SYSTEM_PROMPT = `You are an experienced political and cultural analyst with deep knowledge of media, rhetoric, and information warfare. You are also a knowledgeable Christian theologian grounded in Scripture. You never lie or make up information or sources. When you don't know something, you say so. When you cite a source, it's real. When you reference Scripture, you use accurate verses and citations.
 
 You write in plain everyday language. No jargon. Like a smart, honest friend — direct, specific, and never bland.
@@ -399,10 +516,10 @@ let currentMode = 'text';
 let awaitingChoice = null;
 let articleContent = '';
 
-function switchTab(mode) {
+function switchTab(mode, btn) {
   currentMode = mode;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
   document.getElementById('textInput').style.display = mode === 'text' ? 'block' : 'none';
   document.getElementById('urlInput').style.display = mode === 'url' ? 'block' : 'none';
 }
@@ -411,13 +528,12 @@ async function startAnalysis() {
   const text = currentMode === 'text'
     ? document.getElementById('articleText').value.trim()
     : document.getElementById('articleUrl').value.trim();
-
   if (!text) { alert('Please paste an article or enter a URL first.'); return; }
 
   articleContent = text;
   document.getElementById('inputCard').style.display = 'none';
-  document.getElementById('analysisLabel').style.display = 'block';
-  document.getElementById('resetBar').style.display = 'block';
+  document.getElementById('analysisLabel').style.display = 'flex';
+  document.getElementById('headerReset').style.display = 'block';
 
   const userMsg = currentMode === 'text'
     ? `Please analyze this article:\n\n${text}`
@@ -438,11 +554,15 @@ async function handleChoice(choice, displayLabel) {
 
 async function callClaude(loadingMsg) {
   const loadingEl = addLoading(loadingMsg);
-
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': userApiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
@@ -450,22 +570,15 @@ async function callClaude(loadingMsg) {
         messages: conversationHistory
       })
     });
-
     const data = await response.json();
     loadingEl.remove();
-
     const rawText = data.content?.map(b => b.text || '').join('') || '';
     const [mainText, choicesTag] = splitOnChoices(rawText);
-
     if (mainText.trim()) {
       addAssistantBubble(mainText.trim());
       conversationHistory.push({ role: 'assistant', content: rawText });
     }
-
-    if (choicesTag) {
-      renderChoices(choicesTag);
-    }
-
+    if (choicesTag) renderChoices(choicesTag);
   } catch (err) {
     loadingEl.remove();
     addAssistantBubble('Something went wrong reaching the analysis service. Please try again.');
@@ -488,18 +601,15 @@ function renderChoices(tag) {
   if (tag === 'deeper_or_done') {
     card.innerHTML = `
       <p class="choices-question">Want to go deeper?</p>
-      <button class="choice-btn" onclick="handleChoice('Please give me a deeper summary.', 'Deeper summary')">Deeper summary</button>
-      <button class="choice-btn" onclick="handleChoice('Please give me the full analysis.', 'Full analysis')">Full analysis</button>
-      <button class="choice-btn" onclick="handleChoice('That is enough, thanks.', "That's enough, thanks")">That's enough, thanks</button>
-    `;
+      <button class="choice-btn" onclick="handleChoice('Please give me a deeper summary.','Deeper summary')"><span>Deeper summary</span><span class="chevron">›</span></button>
+      <button class="choice-btn" onclick="handleChoice('Please give me the full analysis.','Full analysis')"><span>Full analysis</span><span class="chevron">›</span></button>
+      <button class="choice-btn" onclick="handleChoice('That is enough, thanks.','That\\'s enough, thanks')"><span>That's enough, thanks</span><span class="chevron">›</span></button>`;
   } else if (tag === 'spiritual') {
     card.innerHTML = `
-      <p class="choices-question">Would you like a spiritual perspective on this?</p>
-      <button class="choice-btn" onclick="handleChoice('Yes, please give me a spiritual perspective.', 'Yes — spiritual perspective')">Yes</button>
-      <button class="choice-btn" onclick="handleChoice('No thanks.', 'No thanks')">No thanks</button>
-    `;
+      <p class="choices-question">Would you like a spiritual perspective?</p>
+      <button class="choice-btn" onclick="handleChoice('Yes, please give me a spiritual perspective.','Yes — spiritual perspective')"><span>Yes, show me</span><span class="chevron">›</span></button>
+      <button class="choice-btn" onclick="handleChoice('No thanks.','No thanks')"><span>No thanks</span><span class="chevron">›</span></button>`;
   } else if (tag === 'done') {
-    // Analysis complete — no more choices needed
     return;
   }
 
@@ -514,20 +624,19 @@ function removeChoices() {
 
 function addUserBubble(text) {
   const el = document.createElement('div');
-  el.className = 'msg';
-  el.innerHTML = `<div class="msg-label user">You</div><div class="msg-body">${escapeHtml(text)}</div>`;
+  el.className = 'msg user-msg';
+  el.innerHTML = `<div class="msg-label user"><span class="dot"></span>You</div><div class="msg-body">${escapeHtml(text)}</div>`;
   document.getElementById('messages').appendChild(el);
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function addAssistantBubble(text) {
   const el = document.createElement('div');
-  el.className = 'msg';
-  // Convert ### headers to h3 tags
+  el.className = 'msg analyst-msg';
   const formatted = text
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/\n/g, '<br>');
-  el.innerHTML = `<div class="msg-label analyst">Clear Eye Analyst</div><div class="msg-body">${formatted}</div>`;
+  el.innerHTML = `<div class="msg-label analyst"><span class="dot"></span>Clear Eye Analyst</div><div class="msg-body">${formatted}</div>`;
   document.getElementById('messages').appendChild(el);
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -535,10 +644,7 @@ function addAssistantBubble(text) {
 function addLoading(msg) {
   const el = document.createElement('div');
   el.className = 'loading-card';
-  el.innerHTML = `
-    <div class="loading-dots"><span></span><span></span><span></span></div>
-    <span class="loading-text">${escapeHtml(msg)}</span>
-  `;
+  el.innerHTML = `<div class="spinner-wrap">👁</div><span class="loading-text">${escapeHtml(msg)}</span>`;
   document.getElementById('messages').appendChild(el);
   el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   return el;
@@ -555,7 +661,7 @@ function resetAll() {
   document.getElementById('messages').innerHTML = '';
   document.getElementById('inputCard').style.display = 'block';
   document.getElementById('analysisLabel').style.display = 'none';
-  document.getElementById('resetBar').style.display = 'none';
+  document.getElementById('headerReset').style.display = 'none';
   document.getElementById('articleText').value = '';
   document.getElementById('articleUrl').value = '';
   window.scrollTo({ top: 0, behavior: 'smooth' });
