@@ -229,10 +229,19 @@
       <input type="checkbox" id="rememberKey" style="accent-color:var(--blue);width:15px;height:15px;cursor:pointer;">
       <label for="rememberKey" style="font-size:13px;color:var(--muted);cursor:pointer;user-select:none;">Remember my API key</label>
     </div>
-    <span class="input-label">Paste article text or enter a URL to analyze</span>
+    <span class="input-label">Article URL</span>
+    <div class="input-row" style="margin-top:0;margin-bottom:14px;">
+      <input type="text" id="urlInput" class="url-input" placeholder="https://...">
+    </div>
+    <span class="input-label">YouTube URL</span>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+      <input type="text" id="ytUrl" class="url-input" style="flex:1;min-width:200px;" placeholder="https://youtube.com/watch?v=...">
+      <button class="btn btn-secondary" id="fetchTranscriptBtn" onclick="fetchYouTubeTranscript()">Fetch Transcript</button>
+    </div>
+    <span class="input-label">Paste full article text</span>
     <textarea id="articleText" placeholder="Paste the full article text here..."></textarea>
-    <div class="input-row">
-      <input type="text" id="urlInput" class="url-input" placeholder="Or enter a URL (e.g. https://...)">
+    <input type="hidden" id="supadataKey" value="sd_646b5276959841196e2d9f1d8a45dd11">
+    <div class="input-row" style="margin-top:12px;">
       <button class="btn btn-primary" id="analyzeBtn" onclick="startAnalysis()">Break It Down</button>
       <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
     </div>
@@ -290,6 +299,7 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('apiKey').value = saved;
     document.getElementById('rememberKey').checked = true;
   }
+
 });
 
 function toggleRememberKey() {
@@ -302,6 +312,7 @@ function toggleRememberKey() {
   }
 }
 
+
 // Save key whenever it changes if remember is checked
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('apiKey').addEventListener('input', () => {
@@ -309,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('nb_api_key', document.getElementById('apiKey').value.trim());
     }
   });
+
 });
 
 const SYSTEM_PROMPT = `You are an experienced political and cultural analyst with deep knowledge of media, rhetoric, and information warfare. You are also a knowledgeable Christian theologian grounded in Scripture. You never lie or make up information or sources. When you don't know something, you say so. When you cite a source, it's real. When you reference Scripture, you use accurate verses and citations.
@@ -351,6 +363,37 @@ function renderText(elementId, text) {
   const el = document.getElementById(elementId);
   const paragraphs = text.split('\n\n').filter(p => p.trim());
   el.innerHTML = paragraphs.map(p => `<p>${p.trim()}</p>`).join('');
+}
+
+async function fetchYouTubeTranscript() {
+  const ytUrl = document.getElementById('ytUrl').value.trim();
+  const supadataKey = document.getElementById('supadataKey').value.trim();
+
+  if (!ytUrl) { alert('Please enter a YouTube URL.'); return; }
+  if (!supadataKey) { alert('Please enter your Supadata API key.'); return; }
+
+  document.getElementById('fetchTranscriptBtn').disabled = true;
+  setLoading('Fetching YouTube transcript...');
+
+  try {
+    const apiUrl = 'https://api.supadata.ai/v1/youtube/transcript?url=' + encodeURIComponent(ytUrl) + '&text=true';
+    const res = await fetch(apiUrl, { headers: { 'x-api-key': supadataKey } });
+    const data = await res.json();
+
+    if (data.error || !data.content) {
+      throw new Error(data.error?.message || 'Could not fetch transcript. The video may not have captions.');
+    }
+
+    // Populate the article textarea with the transcript
+    document.getElementById('articleText').value = data.content;
+    hideLoading();
+    alert('Transcript loaded! Click "Break It Down" to analyze it.');
+  } catch (err) {
+    hideLoading();
+    alert('Error: ' + err.message);
+  }
+
+  document.getElementById('fetchTranscriptBtn').disabled = false;
 }
 
 async function startAnalysis() {
